@@ -28,16 +28,17 @@ declare type FilterOperator = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like
  * Client Args Type
  */
 export declare type ClientArgs = {
-    url: string;
-    authRpcFunction: string;
+    url?: string;
     port?: number;
     username?: string;
     password?: string;
-    getCredentials?: () => Credentials | Promise<Credentials>;
+    token?: string;
+    authRpcFunction?: string;
     getToken?: (data: any) => string;
+    getCredentials?: () => Credentials | Promise<Credentials>;
 };
 /**
- * Get Args
+ * Get Args Type
  */
 export declare type GetArgs = {
     select?: string[];
@@ -48,17 +49,24 @@ export declare type GetArgs = {
     endIndex?: number;
 };
 /**
- * Result
+ * Result Type
  */
 export declare type Result = {
     status: 'ok' | 'error';
-    data: any[] | null;
-    error?: PostgrestError | null;
+    data: any[];
+    error?: PostgrestError;
 };
 /**
- * Single Result
+ * Single Result Type
  */
 export declare type SingleResult = Result & {
     data: any | null;
+};
+/**
+ * Get Multiple Args
+ */
+export declare type GetMultipleArgs = {
+    tableName: string;
+    args?: GetArgs;
 };
 export {};

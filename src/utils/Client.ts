@@ -1,6 +1,11 @@
-import { PostgrestClient } from '@supabase/postgrest-js'
-import { ClientArgs, GetArgs, Result, SingleResult } from './types'
-
+import { PostgrestClient, PostgrestError } from '@supabase/postgrest-js'
+import {
+	ClientArgs,
+	GetArgs,
+	Result,
+	SingleResult,
+	GetMultipleArgs,
+} from './types'
 import {
 	ENV_URL,
 	ENV_PORT,
@@ -16,14 +21,15 @@ import {
 export default class Client {
 	// Properties
 
-	url: string
+	token = ''
 	authenticated = false
-	private client: PostgrestClient
+	url: string
 	private username: string
 	private password: string
 	private authRpcFunction: string
 	private getToken?: ClientArgs['getToken']
 	private getCredentials?: ClientArgs['getCredentials']
+	private client: PostgrestClient
 
 	/**
 	 * Constructor
@@ -35,6 +41,7 @@ export default class Client {
 			port,
 			username,
 			password,
+			token,
 			authRpcFunction,
 			getToken,
 			getCredentials,
@@ -43,16 +50,18 @@ export default class Client {
 			port: ENV_PORT,
 			username: ENV_USERNAME,
 			password: ENV_PASSWORD,
+			token: '',
 			authRpcFunction: ENV_AUTH_RPC_FUNCTION,
 			...args,
 		}
 		this.url = this.getUrlString(url, port)
-		this.username = username
-		this.password = password
+		this.username = username || ''
+		this.password = password || ''
 		this.authRpcFunction = authRpcFunction || ''
 		this.getToken = getToken
 		this.getCredentials = getCredentials
 		this.client = new PostgrestClient(this.url)
+		this.setToken(token)
 	}
 
 	/**
@@ -69,22 +78,19 @@ export default class Client {
 			}
 
 			// Call Auth RPC Function
-			const result = await this.client.rpc(this.authRpcFunction, {
+			const result = await this.functionOne(this.authRpcFunction, {
 				email: this.username,
 				pass: this.password,
 			})
-			const data = result?.data as any
-			if (result?.data) {
+			const { data } = result
+			if (data) {
 				let token: string
 				if (this.getToken) {
 					token = this.getToken(data) || ''
 				} else {
 					token = data?.token || ''
 				}
-				if (token) {
-					this.client.auth(token)
-					this.authenticated = true
-				}
+				this.setToken(token)
 			}
 		} catch (err) {
 			// Do Nothing
@@ -95,7 +101,158 @@ export default class Client {
 	 * Get
 	 */
 
-	async get(tableName: string, args?: GetArgs, singleRecord = false) {
+	async get(tableName: string, args?: GetArgs) {
+		return (await this.getFlow(tableName, args)) as Result
+	}
+
+	/**
+	 * Get One
+	 */
+
+	async getOne(tableName: string, args?: GetArgs) {
+		return (await this.getFlow(tableName, args, true)) as SingleResult
+	}
+
+	/**
+	 * Update
+	 */
+
+	async update(tableName: string, match: any, record: any) {
+		if (Object.keys(match || {}).length == 0) {
+			return {
+				status: 'error',
+				data: [] as any[],
+				error: {
+					message: 'No update query passed, refusing to update all records',
+				},
+			} as Result
+		}
+		const { data, error } = await this.client
+			.from(tableName)
+			.update(record)
+			.match(match)
+		return this.formatResult(data, error) as Result
+	}
+
+	/**
+	 * Upsert
+	 */
+
+	async upsert(tableName: string, records: any[] | any, key = 'id') {
+		const { data, error } = await this.client
+			.from(tableName)
+			.upsert(records, { onConflict: key })
+		return this.formatResult(data, error) as Result
+	}
+
+	/**
+	 * Insert
+	 */
+
+	async insert(tableName: string, records: any[] | any) {
+		const { data, error } = await this.client.from(tableName).insert(records)
+		return this.formatResult(data, error) as Result
+	}
+
+	/**
+	 * Insert One
+	 */
+
+	async insertOne(tableName: string, record: any) {
+		const { data, error } = await this.client.from(tableName).insert(record)
+		return this.formatResult(data, error, true) as SingleResult
+	}
+
+	/**
+	 * Delete
+	 */
+
+	async delete(tableName: string, match: any) {
+		if (Object.keys(match || {}).length == 0) {
+			return {
+				status: 'error',
+				data: [] as any[],
+				error: {
+					message: 'No delete query passed, refusing to delete all records',
+				},
+			} as Result
+		}
+		const { data, error } = await this.client
+			.from(tableName)
+			.delete()
+			.match(match)
+		return this.formatResult(data, error) as Result
+	}
+
+	/**
+	 * Function
+	 */
+
+	async function(functionName: string, args?: any) {
+		return (await this.functionFlow(functionName, args)) as Result
+	}
+
+	/**
+	 * Function One
+	 */
+
+	async functionOne(functionName: string, args?: any) {
+		return (await this.functionFlow(functionName, args, true)) as SingleResult
+	}
+
+	/**
+	 * Get Multiple
+	 */
+
+	async getMultiple(gets: GetMultipleArgs[]) {
+		return (await this.getMultipleFlow(gets)) as Result[]
+	}
+
+	/**
+	 * Get One Multiple
+	 */
+
+	async getOneMultiple(gets: GetMultipleArgs[]) {
+		return (await this.getMultipleFlow(gets, true)) as SingleResult[]
+	}
+
+	/**
+	 * Update Multiple
+	 */
+
+	async updateMultiple(
+		updates: { tableName: string; match: any; record: any }[]
+	) {
+		const requests: ReturnType<Client['update']>[] = []
+		for (const update of updates) {
+			const { tableName, match, record } = update
+			requests.push(this.update(tableName, match, record))
+		}
+		return await Promise.all(requests)
+	}
+
+	/**
+	 * Delete Multiple
+	 */
+
+	async deleteMultiple(deletes: { tableName: string; match: any }[]) {
+		const requests: ReturnType<Client['delete']>[] = []
+		for (const deleteRec of deletes) {
+			const { tableName, match } = deleteRec
+			requests.push(this.delete(tableName, match))
+		}
+		return await Promise.all(requests)
+	}
+
+	/**
+	 * Get Flow
+	 */
+
+	private async getFlow(
+		tableName: string,
+		args?: GetArgs,
+		singleRecord = false
+	): Promise<Result | SingleResult> {
 		const {
 			select,
 			where,
@@ -105,25 +262,22 @@ export default class Client {
 			endIndex: endIndexArg,
 		} = args || {}
 		// Is Valid Range
-		const isValidRange = (start?: number, end?: number) => {
-			const startNum = start || 0
-			const endNum = end || 0
-			return startNum >= 0 && endNum > startNum
-		}
+		const isValidRange = (start?: number, end?: number) =>
+			start != null && end != null && start >= 0 && end >= start
 
 		// Modify Limit and Range Args w/ Single Record
-		const startIndex = startIndexArg || 0
-		let endIndex = endIndexArg || 0
+		const startIndex = startIndexArg
+		let endIndex = endIndexArg
 		let limit = limitArg || 0
 		if (singleRecord) {
 			limit = 1
-			if (startIndex) {
-				endIndex = startIndex + 1
+			if (startIndex != null) {
+				endIndex = startIndex
 			}
 		}
 
 		// Get Selected Fields and Check Valid Range
-		const selectString = select ? select.join(', ') : '*'
+		const selectString = select ? this.formatJSONFields(select).join(', ') : '*'
 		const validRange = isValidRange(startIndex, endIndex)
 		let query = this.client.from(tableName).select(selectString)
 
@@ -136,7 +290,7 @@ export default class Client {
 		}
 
 		// Add Order By Clauses
-		if (orderBy?.length) {
+		if (orderBy && Object.keys(orderBy).length) {
 			for (const field in orderBy) {
 				const ascending = orderBy[field] == 'asc' ? true : false
 				query = query.order(field, { ascending })
@@ -150,7 +304,7 @@ export default class Client {
 
 		// Add Range Clause
 		else if (validRange) {
-			query = query.range(startIndex, endIndex)
+			query = query.range(startIndex || 0, endIndex || 0)
 		}
 
 		// Get Single Record
@@ -164,11 +318,33 @@ export default class Client {
 	}
 
 	/**
-	 * Get One
+	 * Function
 	 */
 
-	async getOne(tableName: string, args: GetArgs) {
-		return await this.get(tableName, args, true)
+	private async functionFlow(
+		functionName: string,
+		args?: any,
+		isSingle = false
+	) {
+		const { data, error } = await this.client.rpc(functionName, args)
+		return this.formatResult(data, error, isSingle)
+	}
+
+	/**
+	 * Get Multiple Flow
+	 */
+
+	private async getMultipleFlow(
+		gets: GetMultipleArgs[],
+		isSingle = false
+	): Promise<Result[] | SingleResult[]> {
+		const requests: Promise<Result | SingleResult>[] = []
+		for (const get of gets) {
+			const { tableName, args } = get
+			const method = isSingle ? this.getOne.bind(this) : this.get.bind(this)
+			requests.push(method(tableName, args))
+		}
+		return await Promise.all(requests)
 	}
 
 	/**
@@ -176,17 +352,37 @@ export default class Client {
 	 */
 
 	private formatResult(
-		result?: any[] | any,
-		error?: Result['error'],
+		records: any,
+		error: PostgrestError | null,
 		isSingle = false
 	) {
-		const status = error ? 'ok' : 'error'
-		const data = isSingle ? result || null : result || []
+		const status = error ? 'error' : 'ok'
+		const isArray = Array.isArray(records)
+		let data = isSingle ? records || null : records || []
+		if (isSingle && isArray) data = data[0] || null
+		else if (!isSingle && data && !isArray) data = [data]
 		return {
 			status,
 			data,
-			error: error || null,
+			error,
 		} as Result | SingleResult
+	}
+
+	/**
+	 * Format JSON Fields
+	 */
+
+	private formatJSONFields(fields: string[]) {
+		const newFields: string[] = []
+		for (const field of fields) {
+			const needsFormat = field.includes('.') || field.includes('[')
+			if (needsFormat) {
+				newFields.push(field.replace(/[.|[]/g, '->').replace(/]/g, ''))
+			} else {
+				newFields.push(field)
+			}
+		}
+		return newFields
 	}
 
 	/**
@@ -200,5 +396,17 @@ export default class Client {
 		}
 		if (port) fullUrl += `:${port}`
 		return fullUrl
+	}
+
+	/**
+	 * Set Token
+	 */
+
+	private setToken(token: string) {
+		if (token) {
+			this.client.auth(token)
+			this.token = token
+			this.authenticated = true
+		}
 	}
 }

@@ -60,17 +60,18 @@ type FilterOperator =
  */
 
 export type ClientArgs = {
-	url: string
-	authRpcFunction: string
+	url?: string
 	port?: number
 	username?: string
 	password?: string
-	getCredentials?: () => Credentials | Promise<Credentials>
+	token?: string
+	authRpcFunction?: string
 	getToken?: (data: any) => string
+	getCredentials?: () => Credentials | Promise<Credentials>
 }
 
 /**
- * Get Args
+ * Get Args Type
  */
 
 export type GetArgs = {
@@ -83,19 +84,25 @@ export type GetArgs = {
 }
 
 /**
- * Result
+ * Result Type
  */
 
 export type Result = {
 	status: 'ok' | 'error'
-	data: any[] | null
-	error?: PostgrestError | null
+	data: any[]
+	error?: PostgrestError
 }
 
 /**
- * Single Result
+ * Single Result Type
  */
 
 export type SingleResult = Result & {
 	data: any | null
 }
+
+/**
+ * Get Multiple Args
+ */
+
+export type GetMultipleArgs = { tableName: string; args?: GetArgs }

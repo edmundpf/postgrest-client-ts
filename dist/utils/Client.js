@@ -19,15 +19,18 @@ class Client {
      * Constructor
      */
     constructor(args) {
+        // Properties
+        this.token = '';
         this.authenticated = false;
-        const { url, port, username, password, authRpcFunction, getToken, getCredentials, } = Object.assign({ url: envValues_1.ENV_URL, port: envValues_1.ENV_PORT, username: envValues_1.ENV_USERNAME, password: envValues_1.ENV_PASSWORD, authRpcFunction: envValues_1.ENV_AUTH_RPC_FUNCTION }, args);
+        const { url, port, username, password, token, authRpcFunction, getToken, getCredentials, } = Object.assign({ url: envValues_1.ENV_URL, port: envValues_1.ENV_PORT, username: envValues_1.ENV_USERNAME, password: envValues_1.ENV_PASSWORD, token: '', authRpcFunction: envValues_1.ENV_AUTH_RPC_FUNCTION }, args);
         this.url = this.getUrlString(url, port);
-        this.username = username;
-        this.password = password;
+        this.username = username || '';
+        this.password = password || '';
         this.authRpcFunction = authRpcFunction || '';
         this.getToken = getToken;
         this.getCredentials = getCredentials;
         this.client = new postgrest_js_1.PostgrestClient(this.url);
+        this.setToken(token);
     }
     /**
      * Authenticate
@@ -42,12 +45,9 @@ class Client {
                     this.password = (info === null || info === void 0 ? void 0 : info.password) || '';
                 }
                 // Call Auth RPC Function
-                const result = yield this.client.rpc(this.authRpcFunction, {
-                    email: this.username,
-                    pass: this.password,
-                });
-                const data = result === null || result === void 0 ? void 0 : result.data;
-                if (result === null || result === void 0 ? void 0 : result.data) {
+                const result = yield this.functionOne(this.authRpcFunction, { email: this.username, pass: this.password });
+                const { data } = result;
+                if (data) {
                     let token;
                     if (this.getToken) {
                         token = this.getToken(data) || '';
@@ -55,10 +55,7 @@ class Client {
                     else {
                         token = (data === null || data === void 0 ? void 0 : data.token) || '';
                     }
-                    if (token) {
-                        this.client.auth(token);
-                        this.authenticated = true;
-                    }
+                    this.setToken(token);
                 }
             }
             catch (err) {
@@ -69,27 +66,175 @@ class Client {
     /**
      * Get
      */
-    get(tableName, args, singleRecord = false) {
+    get(tableName, args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getFlow(tableName, args);
+        });
+    }
+    /**
+     * Get One
+     */
+    getOne(tableName, args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getFlow(tableName, args, true);
+        });
+    }
+    /**
+     * Update
+     */
+    update(tableName, match, record) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (Object.keys(match || {}).length == 0) {
+                return {
+                    status: 'error',
+                    data: [],
+                    error: {
+                        message: 'No update query passed, refusing to update all records'
+                    }
+                };
+            }
+            const { data, error } = yield this.client
+                .from(tableName)
+                .update(record)
+                .match(match);
+            return this.formatResult(data, error);
+        });
+    }
+    /**
+     * Upsert
+     */
+    upsert(tableName, records, key = 'id') {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { data, error } = yield this.client
+                .from(tableName)
+                .upsert(records, { onConflict: key });
+            return this.formatResult(data, error);
+        });
+    }
+    /**
+     * Insert
+     */
+    insert(tableName, records) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { data, error } = yield this.client
+                .from(tableName)
+                .insert(records);
+            return this.formatResult(data, error);
+        });
+    }
+    /**
+     * Insert One
+     */
+    insertOne(tableName, record) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { data, error } = yield this.client
+                .from(tableName)
+                .insert(record);
+            return this.formatResult(data, error, true);
+        });
+    }
+    /**
+     * Delete
+     */
+    delete(tableName, match) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (Object.keys(match || {}).length == 0) {
+                return {
+                    status: 'error',
+                    data: [],
+                    error: {
+                        message: 'No delete query passed, refusing to delete all records'
+                    }
+                };
+            }
+            const { data, error } = yield this.client
+                .from(tableName)
+                .delete()
+                .match(match);
+            return this.formatResult(data, error);
+        });
+    }
+    /**
+     * Function
+     */
+    function(functionName, args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.functionFlow(functionName, args);
+        });
+    }
+    /**
+     * Function One
+     */
+    functionOne(functionName, args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.functionFlow(functionName, args, true);
+        });
+    }
+    /**
+     * Get Multiple
+     */
+    getMultiple(gets) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getMultipleFlow(gets);
+        });
+    }
+    /**
+     * Get One Multiple
+     */
+    getOneMultiple(gets) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getMultipleFlow(gets, true);
+        });
+    }
+    /**
+     * Update Multiple
+     */
+    updateMultiple(updates) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const requests = [];
+            for (const update of updates) {
+                const { tableName, match, record } = update;
+                requests.push(this.update(tableName, match, record));
+            }
+            return yield Promise.all(requests);
+        });
+    }
+    /**
+     * Delete Multiple
+     */
+    deleteMultiple(deletes) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const requests = [];
+            for (const deleteRec of deletes) {
+                const { tableName, match } = deleteRec;
+                requests.push(this.delete(tableName, match));
+            }
+            return yield Promise.all(requests);
+        });
+    }
+    /**
+     * Get Flow
+     */
+    getFlow(tableName, args, singleRecord = false) {
         return __awaiter(this, void 0, void 0, function* () {
             const { select, where, orderBy, limit: limitArg, startIndex: startIndexArg, endIndex: endIndexArg, } = args || {};
             // Is Valid Range
-            const isValidRange = (start, end) => {
-                const startNum = start || 0;
-                const endNum = end || 0;
-                return startNum >= 0 && endNum > startNum;
-            };
+            const isValidRange = (start, end) => start != null && end != null &&
+                start >= 0 && end >= start;
             // Modify Limit and Range Args w/ Single Record
-            const startIndex = startIndexArg || 0;
-            let endIndex = endIndexArg || 0;
+            const startIndex = startIndexArg;
+            let endIndex = endIndexArg;
             let limit = limitArg || 0;
             if (singleRecord) {
                 limit = 1;
-                if (startIndex) {
-                    endIndex = startIndex + 1;
+                if (startIndex != null) {
+                    endIndex = startIndex;
                 }
             }
             // Get Selected Fields and Check Valid Range
-            const selectString = select ? select.join(', ') : '*';
+            const selectString = select
+                ? this.formatJSONFields(select).join(', ')
+                : '*';
             const validRange = isValidRange(startIndex, endIndex);
             let query = this.client.from(tableName).select(selectString);
             // Add Where Clauses
@@ -100,7 +245,7 @@ class Client {
                 }
             }
             // Add Order By Clauses
-            if (orderBy === null || orderBy === void 0 ? void 0 : orderBy.length) {
+            if (orderBy && Object.keys(orderBy).length) {
                 for (const field in orderBy) {
                     const ascending = orderBy[field] == 'asc' ? true : false;
                     query = query.order(field, { ascending });
@@ -112,7 +257,7 @@ class Client {
             }
             // Add Range Clause
             else if (validRange) {
-                query = query.range(startIndex, endIndex);
+                query = query.range(startIndex || 0, endIndex || 0);
             }
             // Get Single Record
             if (singleRecord) {
@@ -126,26 +271,62 @@ class Client {
         });
     }
     /**
-     * Get One
+     * Function
      */
-    getOne(tableName, args) {
+    functionFlow(functionName, args, isSingle = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.get(tableName, args, true);
+            const { data, error } = yield this.client.rpc(functionName, args);
+            return this.formatResult(data, error, isSingle);
+        });
+    }
+    /**
+     * Get Multiple Flow
+     */
+    getMultipleFlow(gets, isSingle = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const requests = [];
+            for (const get of gets) {
+                const { tableName, args } = get;
+                const method = isSingle
+                    ? this.getOne.bind(this)
+                    : this.get.bind(this);
+                requests.push(method(tableName, args));
+            }
+            return yield Promise.all(requests);
         });
     }
     /**
      * Format Result
      */
-    formatResult(result, error, isSingle = false) {
-        const status = error ? 'ok' : 'error';
-        const data = isSingle
-            ? (result || null)
-            : (result || []);
+    formatResult(records, error, isSingle = false) {
+        const status = error ? 'error' : 'ok';
+        const isArray = Array.isArray(records);
+        let data = isSingle ? records || null : records || [];
+        if (isSingle && isArray)
+            data = data[0] || null;
+        else if (!isSingle && data && !isArray)
+            data = [data];
         return {
             status,
             data,
-            error: error || null
+            error,
         };
+    }
+    /**
+     * Format JSON Fields
+     */
+    formatJSONFields(fields) {
+        const newFields = [];
+        for (const field of fields) {
+            const needsFormat = field.includes('.') || field.includes('[');
+            if (needsFormat) {
+                newFields.push(field.replace(/[.|[]/g, '->').replace(/]/g, ''));
+            }
+            else {
+                newFields.push(field);
+            }
+        }
+        return newFields;
     }
     /**
      * Get Url String
@@ -158,6 +339,16 @@ class Client {
         if (port)
             fullUrl += `:${port}`;
         return fullUrl;
+    }
+    /**
+     * Set Token
+     */
+    setToken(token) {
+        if (token) {
+            this.client.auth(token);
+            this.token = token;
+            this.authenticated = true;
+        }
     }
 }
 exports.default = Client;
