@@ -45,7 +45,10 @@ class Client {
                     this.password = (info === null || info === void 0 ? void 0 : info.password) || '';
                 }
                 // Call Auth RPC Function
-                const result = yield this.functionOne(this.authRpcFunction, { email: this.username, pass: this.password });
+                const result = yield this.functionOne(this.authRpcFunction, {
+                    email: this.username,
+                    pass: this.password,
+                });
                 const { data } = result;
                 if (data) {
                     let token;
@@ -68,7 +71,7 @@ class Client {
      */
     get(tableName, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.getFlow(tableName, args);
+            return (yield this.getFlow(tableName, args));
         });
     }
     /**
@@ -76,7 +79,7 @@ class Client {
      */
     getOne(tableName, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.getFlow(tableName, args, true);
+            return (yield this.getFlow(tableName, args, true));
         });
     }
     /**
@@ -89,8 +92,8 @@ class Client {
                     status: 'error',
                     data: [],
                     error: {
-                        message: 'No update query passed, refusing to update all records'
-                    }
+                        message: 'No update query passed, refusing to update all records',
+                    },
                 };
             }
             const { data, error } = yield this.client
@@ -116,9 +119,7 @@ class Client {
      */
     insert(tableName, records) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { data, error } = yield this.client
-                .from(tableName)
-                .insert(records);
+            const { data, error } = yield this.client.from(tableName).insert(records);
             return this.formatResult(data, error);
         });
     }
@@ -127,9 +128,7 @@ class Client {
      */
     insertOne(tableName, record) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { data, error } = yield this.client
-                .from(tableName)
-                .insert(record);
+            const { data, error } = yield this.client.from(tableName).insert(record);
             return this.formatResult(data, error, true);
         });
     }
@@ -143,8 +142,8 @@ class Client {
                     status: 'error',
                     data: [],
                     error: {
-                        message: 'No delete query passed, refusing to delete all records'
-                    }
+                        message: 'No delete query passed, refusing to delete all records',
+                    },
                 };
             }
             const { data, error } = yield this.client
@@ -159,7 +158,7 @@ class Client {
      */
     function(functionName, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.functionFlow(functionName, args);
+            return (yield this.functionFlow(functionName, args));
         });
     }
     /**
@@ -167,7 +166,7 @@ class Client {
      */
     functionOne(functionName, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.functionFlow(functionName, args, true);
+            return (yield this.functionFlow(functionName, args, true));
         });
     }
     /**
@@ -175,7 +174,7 @@ class Client {
      */
     getMultiple(gets) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.getMultipleFlow(gets);
+            return (yield this.getMultipleFlow(gets));
         });
     }
     /**
@@ -183,7 +182,7 @@ class Client {
      */
     getOneMultiple(gets) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.getMultipleFlow(gets, true);
+            return (yield this.getMultipleFlow(gets, true));
         });
     }
     /**
@@ -219,8 +218,7 @@ class Client {
         return __awaiter(this, void 0, void 0, function* () {
             const { select, where, orderBy, limit: limitArg, startIndex: startIndexArg, endIndex: endIndexArg, } = args || {};
             // Is Valid Range
-            const isValidRange = (start, end) => start != null && end != null &&
-                start >= 0 && end >= start;
+            const isValidRange = (start, end) => start != null && end != null && start >= 0 && end >= start;
             // Modify Limit and Range Args w/ Single Record
             const startIndex = startIndexArg;
             let endIndex = endIndexArg;
@@ -232,9 +230,7 @@ class Client {
                 }
             }
             // Get Selected Fields and Check Valid Range
-            const selectString = select
-                ? this.formatJSONFields(select).join(', ')
-                : '*';
+            const selectString = select ? this.formatJSONFields(select).join(', ') : '*';
             const validRange = isValidRange(startIndex, endIndex);
             let query = this.client.from(tableName).select(selectString);
             // Add Where Clauses
@@ -287,9 +283,7 @@ class Client {
             const requests = [];
             for (const get of gets) {
                 const { tableName, args } = get;
-                const method = isSingle
-                    ? this.getOne.bind(this)
-                    : this.get.bind(this);
+                const method = isSingle ? this.getOne.bind(this) : this.get.bind(this);
                 requests.push(method(tableName, args));
             }
             return yield Promise.all(requests);
@@ -306,11 +300,13 @@ class Client {
             data = data[0] || null;
         else if (!isSingle && data && !isArray)
             data = [data];
-        return {
+        const result = {
             status,
             data,
-            error,
         };
+        if (error)
+            result.error = error;
+        return result;
     }
     /**
      * Format JSON Fields

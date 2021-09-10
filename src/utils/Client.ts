@@ -361,11 +361,12 @@ export default class Client {
 		let data = isSingle ? records || null : records || []
 		if (isSingle && isArray) data = data[0] || null
 		else if (!isSingle && data && !isArray) data = [data]
-		return {
+		const result = {
 			status,
 			data,
-			error,
 		} as Result | SingleResult
+		if (error) result.error = error
+		return result
 	}
 
 	/**
