@@ -24,4 +24,4 @@ console.log(result.data)
 
 ## Documentation
 
-- [Package Docs](docs/globals.md)
+- [Package Docs](docs)
