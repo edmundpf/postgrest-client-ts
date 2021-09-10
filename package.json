@@ -67,5 +67,9 @@
     "typedoc-plugin-markdown": "*",
     "typescript": "*"
   },
-  "private": false
+  "private": false,
+  "dependencies": {
+    "@supabase/postgrest-js": "^0.33.3",
+    "dotenv": "^10.0.0"
+  }
 }

@@ -1,1 +1,2 @@
-export default { init: 1 }
+import Client from './utils/Client'
+export default Client

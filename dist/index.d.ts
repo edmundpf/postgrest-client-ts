@@ -1,4 +1,2 @@
-declare const _default: {
-    init: number;
-};
-export default _default;
+import Client from './utils/Client';
+export default Client;
