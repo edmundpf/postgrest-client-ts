@@ -1,6 +1,6 @@
 {
   "name": "postgrest-client-ts",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Postgrest Client using JWT auth",
   "main": "./dist/index.js",
   "files": [
