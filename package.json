@@ -54,6 +54,7 @@
   },
   "homepage": "https://github.com/edmundpf/postgrest-client-ts#readme",
   "devDependencies": {
+    "@types/base-64": "^1.0.0",
     "@types/node": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
@@ -70,6 +71,7 @@
   "private": false,
   "dependencies": {
     "@supabase/postgrest-js": "^0.33.3",
+    "base-64": "^1.0.0",
     "dotenv": "^10.0.0"
   }
 }
