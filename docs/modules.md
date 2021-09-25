@@ -35,4 +35,4 @@ Client Args Type
 
 #### Defined in
 
-[utils/types.ts:62](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/types.ts#L62)
+[utils/types.ts:62](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/types.ts#L62)

@@ -62,7 +62,7 @@ Constructor
 
 #### Defined in
 
-[utils/Client.ts:38](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L38)
+[utils/Client.ts:38](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L38)
 
 ## Properties
 
@@ -72,7 +72,7 @@ Constructor
 
 #### Defined in
 
-[utils/Client.ts:29](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L29)
+[utils/Client.ts:29](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L29)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[utils/Client.ts:25](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L25)
+[utils/Client.ts:25](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L25)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[utils/Client.ts:32](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L32)
+[utils/Client.ts:32](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L32)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[utils/Client.ts:31](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L31)
+[utils/Client.ts:31](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L31)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[utils/Client.ts:30](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L30)
+[utils/Client.ts:30](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L30)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[utils/Client.ts:28](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L28)
+[utils/Client.ts:28](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L28)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[utils/Client.ts:24](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L24)
+[utils/Client.ts:24](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L24)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[utils/Client.ts:26](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L26)
+[utils/Client.ts:26](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L26)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[utils/Client.ts:27](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L27)
+[utils/Client.ts:27](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L27)
 
 ## Methods
 
@@ -190,7 +190,7 @@ Authenticate
 
 #### Defined in
 
-[utils/Client.ts:71](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L71)
+[utils/Client.ts:71](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L71)
 
 ___
 
@@ -213,7 +213,7 @@ Delete
 
 #### Defined in
 
-[utils/Client.ts:170](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L170)
+[utils/Client.ts:170](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L170)
 
 ___
 
@@ -235,7 +235,7 @@ Delete Multiple
 
 #### Defined in
 
-[utils/Client.ts:238](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L238)
+[utils/Client.ts:238](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L238)
 
 ___
 
@@ -257,7 +257,7 @@ Format JSON Fields
 
 #### Defined in
 
-[utils/Client.ts:376](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L376)
+[utils/Client.ts:376](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L376)
 
 ___
 
@@ -281,7 +281,7 @@ Format Result
 
 #### Defined in
 
-[utils/Client.ts:354](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L354)
+[utils/Client.ts:354](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L354)
 
 ___
 
@@ -304,7 +304,7 @@ Function
 
 #### Defined in
 
-[utils/Client.ts:191](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L191)
+[utils/Client.ts:191](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L191)
 
 ___
 
@@ -328,7 +328,7 @@ Function
 
 #### Defined in
 
-[utils/Client.ts:324](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L324)
+[utils/Client.ts:324](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L324)
 
 ___
 
@@ -351,7 +351,7 @@ Function One
 
 #### Defined in
 
-[utils/Client.ts:199](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L199)
+[utils/Client.ts:199](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L199)
 
 ___
 
@@ -374,7 +374,7 @@ Get
 
 #### Defined in
 
-[utils/Client.ts:104](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L104)
+[utils/Client.ts:104](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L104)
 
 ___
 
@@ -398,7 +398,7 @@ Get Flow
 
 #### Defined in
 
-[utils/Client.ts:251](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L251)
+[utils/Client.ts:251](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L251)
 
 ___
 
@@ -420,7 +420,7 @@ Get Multiple
 
 #### Defined in
 
-[utils/Client.ts:207](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L207)
+[utils/Client.ts:207](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L207)
 
 ___
 
@@ -443,7 +443,7 @@ Get Multiple Flow
 
 #### Defined in
 
-[utils/Client.ts:337](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L337)
+[utils/Client.ts:337](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L337)
 
 ___
 
@@ -466,7 +466,7 @@ Get One
 
 #### Defined in
 
-[utils/Client.ts:112](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L112)
+[utils/Client.ts:112](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L112)
 
 ___
 
@@ -488,7 +488,7 @@ Get One Multiple
 
 #### Defined in
 
-[utils/Client.ts:215](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L215)
+[utils/Client.ts:215](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L215)
 
 ___
 
@@ -511,7 +511,7 @@ Get Url String
 
 #### Defined in
 
-[utils/Client.ts:393](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L393)
+[utils/Client.ts:393](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L393)
 
 ___
 
@@ -534,7 +534,7 @@ Insert
 
 #### Defined in
 
-[utils/Client.ts:152](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L152)
+[utils/Client.ts:152](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L152)
 
 ___
 
@@ -557,7 +557,7 @@ Insert One
 
 #### Defined in
 
-[utils/Client.ts:161](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L161)
+[utils/Client.ts:161](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L161)
 
 ___
 
@@ -579,7 +579,7 @@ Set Token
 
 #### Defined in
 
-[utils/Client.ts:406](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L406)
+[utils/Client.ts:406](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L406)
 
 ___
 
@@ -603,7 +603,7 @@ Update
 
 #### Defined in
 
-[utils/Client.ts:120](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L120)
+[utils/Client.ts:120](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L120)
 
 ___
 
@@ -625,7 +625,7 @@ Update Multiple
 
 #### Defined in
 
-[utils/Client.ts:223](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L223)
+[utils/Client.ts:223](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L223)
 
 ___
 
@@ -649,4 +649,4 @@ Upsert
 
 #### Defined in
 
-[utils/Client.ts:141](https://github.com/edmundpf/postgrest-client-ts/blob/f4b1e92/src/utils/Client.ts#L141)
+[utils/Client.ts:141](https://github.com/edmundpf/postgrest-client-ts/blob/95f0a45/src/utils/Client.ts#L141)
